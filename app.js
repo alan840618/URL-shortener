@@ -1,11 +1,12 @@
 const express = require('express')
 const app = express()
-const port = 3000
+const PORT = 3000
+require('./config/mongoose')
 
 app.get('/',(req,res)=>{
   res.send('hello world')
 })
 
-app.listen(port,()=>{
-  console.log('App is running on http://localhost:3000')
+app.listen(PORT,()=>{
+  console.log(`App is running on http://localhost:${PORT}`)
 })
