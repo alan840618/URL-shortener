@@ -1,16 +1,24 @@
 <div class="container justify-content-center">
-
- <form action="/" method="POST" style="display: inline;">
-  <div class="input-group">
-    <input class="form-control" type="text" placeholder="Input url here" required>
-    <button class="btn btn-primary" type="submit">Shorten</button>
-  </div>
- </form>
-{{#if originUrl}}
+{{#if shortUrl}}
  <div class="result">
   <h3>Success! Please use this link:</h3>
-  <p id="generatedURL">{{originUrl}}/{{shortUrl}}</p>
+  <p id="generatedURL">{{origin}}/{{shortUrl}}</p>
  </div>
  <button type="button" class="btn btn-primary" onclick="copy()">Copy</button>
+ <script>
+  function copy() {
+    const URL = document.getElementById("generatedURL")
+    navigator.clipboard.writeText(URL.innerText)
+      .then(() => alert('copied'))
+      .catch(error => console.log(error))
+  }
+ </script>
+{{else}}
+<form action="/" method="POST" style="display: inline;">
+  <div class="input-group">
+    <input class="form-control" type="url" name="url" placeholder="Input url here" required>
+    <button class="btn btn-primary" type="submit">Shorten</button>
+  </div>
+</form>
 {{/if}}
 </div>
