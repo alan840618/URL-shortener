@@ -1,37 +1,48 @@
 const express = require('express')
+const exphbs = require('express-handlebars')
 const app = express()
 const PORT = 3000
-const exphbs = require('express-handlebars')
 const URL = require('./models/URL')
 const shortener = require('./utils/shortener')
+const bodyParser = require('body-parser')
 require('./config/mongoose')
 app.engine('hbs',exphbs({defaultLayout:'main',extname:'.hbs'}))
 app.set('view engine', 'hbs')
+app.use(bodyParser.urlencoded({ extended: true }))
 //主路由設定
 app.get('/',(req,res)=>{
   res.render('index')
 })
 //縮短網址路由
 app.post('/', (req, res) => {
-  const shortUrl = shortener(5)
-  URL.findOne({ originUrl: req.body.url })
+  let shortUrl = shortener(5)
+  const originUrl = req.body.url
+  if (!originUrl) {
+    return res.status(400).render('reminder')
+  }
+  URL.findOne({ originUrl})
+    .lean()
     .then(data=>{
-      data ? data : URL.create({ shortUrl, originUrl: req.body.url })
-    })
-    .then(data=>{
-      res.render('index', {
-        origin: req.headers.origin,
-        shortUrl: data.shortUrl,
-      })
+      if(data){
+        res.render('index', { origin: req.headers.origin, url: data })
+        }else{
+        URL.create({ shortUrl, originUrl })
+          .then(data => {
+            res.render('index', { origin: req.headers.origin, url: data })
+          })
+        }
     })
     .catch(error => console.error(error))
-})
-//輸入短網址重新倒回原網址
+  })
+
+//重新倒回原網址
 app.get('/:shortUrl', (req, res) => {
-    URL.findOne({ shortUrl: req.params.shortUrl })
+    const shortUrl = req.params.shortUrl
+    URL.findOne({ shortUrl: shortUrl })
+    .lean()
     .then(data => {
       if (!data) {
-        return res.render("error", {
+        return res.render('error', {
           errorMsg: "Can't found the URL",
           errorURL: req.headers.host + "/" + shortUrl,
         })
