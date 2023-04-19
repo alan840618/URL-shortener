@@ -1,5 +1,5 @@
 # URL-shortener
-[Imgur](https://imgur.com/21HM6gd)
+![Imgur](https://imgur.com/21HM6gd)
 ## 功能
 1. 使用者輸入原網址，點擊"Shorten"按鈕後，會產生一組短網址。
 2. 使用者可透過短網址，造訪原網站
